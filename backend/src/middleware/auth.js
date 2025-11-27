@@ -1,16 +1,43 @@
+import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
-export const protect = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith("Bearer "))
-    return res.status(401).json({ message: "Not authorized" });
+// Generate token
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+};
 
-  const token = authHeader.split(" ")[1];
+export const signup = async (req, res) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { id, name, email }
-    next();
-  } catch (err) {
-    res.status(401).json({ message: "Token invalid" });
+    const { name, email, password } = req.body;
+
+    // Validate fields
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Check if user already exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    // Create user
+    const user = await User.create({ name, email, password });
+
+    return res.status(201).json({
+      message: "Signup successful",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+      token: generateToken(user._id),
+    });
+
+  } catch (error) {
+    console.error("Signup Error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

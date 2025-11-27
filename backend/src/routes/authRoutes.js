@@ -11,21 +11,32 @@ const generateToken = (user) =>
     { expiresIn: "7d" }
   );
 
-// Signup – only if no admin exists
+// Signup Route (allow multiple users)
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Allow only ONE admin
-    const existingAdmin = await User.findOne();
-    if (existingAdmin)
-      return res.status(400).json({ message: "Admin already exists" });
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields required" });
+    }
 
+    // Check if email exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
+    // Create new user
     const user = await User.create({ name, email, password });
 
-    return res.json({
+    return res.status(201).json({
+      message: "Signup successful",
       token: generateToken(user),
-      user: { id: user._id, name: user.name, email: user.email }
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
     });
 
   } catch (err) {
@@ -34,7 +45,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// Login
+// Login Route
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -47,7 +58,11 @@ router.post("/login", async (req, res) => {
 
     return res.json({
       token: generateToken(user),
-      user: { id: user._id, name: user.name, email: user.email }
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
     });
 
   } catch (err) {
