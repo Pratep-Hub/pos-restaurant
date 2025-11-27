@@ -1,46 +1,46 @@
 import express from "express";
 import Bill from "../models/Bill.js";
-import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/bill", protect, async (req, res) => {
+// CREATE BILL
+router.post("/bill", async (req, res) => {
   try {
     const { tableNo, items } = req.body;
 
-    const subtotal = items.reduce(
-      (sum, i) => sum + i.price * i.quantity,
-      0
-    );
+    const calculatedItems = items.map(i => ({
+      ...i,
+      total: i.quantity * i.price
+    }));
+
+    const subtotal = calculatedItems.reduce((sum, i) => sum + i.total, 0);
 
     const bill = await Bill.create({
       tableNo,
-      items: items.map((i) => ({
-        ...i,
-        total: i.price * i.quantity
-      })),
+      items: calculatedItems,
       subtotal,
       tax: 0,
       grandTotal: subtotal,
-      paid: false
+      paid: false,
+      date: new Date()
     });
 
     res.json(bill);
+
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Bill Save Error:", err);
+    res.status(500).json({ error: "Bill save failed" });
   }
 });
 
-router.post("/bill/:id/pay", protect, async (req, res) => {
+// MARK BILL AS PAID
+router.post("/bill/:id/pay", async (req, res) => {
   try {
-    const bill = await Bill.findByIdAndUpdate(
-      req.params.id,
-      { paid: true },
-      { new: true }
-    );
-    res.json(bill);
+    await Bill.findByIdAndUpdate(req.params.id, { paid: true });
+    res.json({ message: "Bill marked as paid" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Pay Bill Error:", err);
+    res.status(500).json({ error: "Payment update failed" });
   }
 });
 
