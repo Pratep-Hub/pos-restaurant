@@ -26,7 +26,7 @@ export default function Dashboard() {
     0
   );
 
-  // SAVE BILL
+  // Save Bill
   const createBill = async () => {
     try {
       const filtered = items.filter((i) => i.name && i.quantity > 0);
@@ -49,14 +49,74 @@ export default function Dashboard() {
     }
   };
 
-  // AUTO PRINT (NO POPUP WINDOW)
+  // ------------- MARK PAID & PRINT (POPUP RECEIPT WITH SMALL LOGO) -----------------
   const markPaidAndPrint = async () => {
-    if (!bill?._id) return;
+    if (!bill || !bill._id) {
+      alert("Please save the bill first before printing.");
+      return;
+    }
 
     await api.post(`/pos/bill/${bill._id}/pay`);
 
+    const printArea = document.getElementById("print-receipt");
+    if (!printArea) return alert("Print area not found!");
+
+    const html = printArea.innerHTML;
+
+    const popup = window.open("", "_blank", "width=400,height=600");
+
+    popup.document.write(`
+      <html>
+        <head>
+          <title>Receipt</title>
+
+          <style>
+            @page { size: 80mm auto; margin: 0; }
+
+            body {
+              font-family: monospace;
+              width: 80mm;
+              padding: 10px;
+            }
+
+            /* 🔥 SMALL LOGO FIX (WORKS IN POPUP) */
+            .receipt-logo {
+              width: 50px !important;
+              max-width: 50px !important;
+              height: auto !important;
+              object-fit: contain !important;
+              margin: 0 auto 6px auto !important;
+              display: block !important;
+            }
+
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 4px 0; border-bottom: 1px dashed #aaa; }
+
+            .receipt-title {
+              text-align: center;
+              font-size: 16px;
+              font-weight: bold;
+              margin-bottom: 8px;
+            }
+
+            .thanks-msg {
+              text-align: center;
+              margin-top: 10px;
+            }
+          </style>
+        </head>
+
+        <body>
+          ${html}
+        </body>
+      </html>
+    `);
+
+    popup.document.close();
+    popup.focus();
+
     setTimeout(() => {
-      window.print();
+      popup.print();
     }, 300);
   };
 
@@ -66,7 +126,6 @@ export default function Dashboard() {
 
       <div className="dashboard-card">
 
-        {/* TABLE SELECT */}
         <div className="table-select-area">
           <span>Table:</span>
           <select value={tableNo} onChange={(e) => setTableNo(e.target.value)}>
@@ -76,7 +135,6 @@ export default function Dashboard() {
           </select>
         </div>
 
-        {/* POS ENTRY TABLE */}
         <table className="pos-table">
           <thead>
             <tr>
@@ -118,21 +176,18 @@ export default function Dashboard() {
                     }
                   />
                 </td>
-                <td className="text-right">
-                  {(row.quantity || 0) * (row.price || 0)}
-                </td>
+                <td>{(row.quantity || 0) * (row.price || 0)}</td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {/* BUTTONS */}
         <button className="add-item-btn" onClick={addRow}>
           + Add Item
         </button>
 
         <div className="footer-actions">
-          <span className="subtotal-text">Subtotal: {subtotal}</span>
+          <span>Subtotal: {subtotal}</span>
 
           <button className="save-btn" onClick={createBill}>
             Save Bill
@@ -144,14 +199,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* PRINT RECEIPT */}
-      <div id="print-receipt" className="print-area">
-        
-        <img 
-          src="/TurkishLogo.png"
-          alt="Shop Logo"
-          className="receipt-logo"
-        />
+      {/* PRINT TEMPLATE */}
+      <div id="print-receipt">
+        <img src="/TurkishLogo.png" alt="Logo" className="receipt-logo" />
 
         <h2 className="receipt-title">Turkish Doner</h2>
 
@@ -159,7 +209,7 @@ export default function Dashboard() {
         <p>Date: {new Date(bill?.date).toLocaleString()}</p>
         <hr />
 
-        <table className="receipt-table">
+        <table>
           <thead>
             <tr>
               <th>Item</th>
@@ -182,8 +232,8 @@ export default function Dashboard() {
         </table>
 
         <hr />
-        <p className="receipt-total">Subtotal: {bill?.subtotal}</p>
-        <p className="receipt-total">Grand Total: {bill?.grandTotal}</p>
+        <p>Subtotal: {bill?.subtotal}</p>
+        <p>Grand Total: {bill?.grandTotal}</p>
 
         <p className="thanks-msg">Thank you! Visit Again 🙏</p>
       </div>

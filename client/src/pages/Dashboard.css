@@ -13,7 +13,7 @@
   background: white;
   padding: 24px;
   border-radius: 14px;
-  box-shadow: rgba(100, 116, 139, 0.2) 0px 7px 18px;
+  box-shadow: rgba(100, 116, 139, 0.2) 0 7px 18px;
 }
 
 /* ============================================================
@@ -23,12 +23,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .table-select-area select {
+  padding: 6px 12px;
   border: 1px solid #cbd5e1;
-  padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
 }
@@ -44,12 +44,13 @@
 .pos-table th {
   background: #e2e8f0;
   padding: 12px;
-  font-weight: bold;
+  font-weight: 600;
+  text-align: left;
 }
 
 .pos-table td {
   padding: 10px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #ddd;
 }
 
 .pos-table input {
@@ -60,66 +61,68 @@
 }
 
 .pos-table input:focus {
-  border-color: #2563eb;
   outline: none;
-  background: #ffffff;
+  border-color: #2563eb;
+  background: #fff;
 }
 
 /* ============================================================
    BUTTONS
 ============================================================ */
+
 .add-item-btn,
 .save-btn,
 .pay-btn {
   cursor: pointer;
-  transition: background 0.25s ease;
+  border: none;
+  padding: 10px 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: 0.25s ease;
 }
 
+/* + Add Item Button */
 .add-item-btn {
-  margin-top: 10px;
   background: #1e293b;
   color: white;
-  padding: 7px 14px;
-  border-radius: 6px;
+  margin-top: 10px;
 }
 .add-item-btn:hover {
   background: #334155;
 }
 
-.footer-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  margin-top: 20px;
-}
-
+/* Save Bill Button */
 .save-btn {
   background: #2563eb;
   color: white;
-  padding: 10px 18px;
-  border-radius: 8px;
 }
 .save-btn:hover {
   background: #1d4ed8;
 }
 
+/* Mark Paid & Print Button */
 .pay-btn {
   background: #16a34a;
   color: white;
-  padding: 10px 18px;
-  border-radius: 8px;
 }
 .pay-btn:hover {
   background: #15803d;
 }
 
+.footer-actions {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
 /* ============================================================
-   PRINT RECEIPT (HIDDEN ON SCREEN)
+   PRINT RECEIPT SETTINGS (HIDDEN ON SCREEN)
 ============================================================ */
 #print-receipt {
   display: none;
   font-family: monospace;
-  font-size: 13px;
 }
 
 .receipt-logo {
@@ -128,19 +131,8 @@
   margin: 0 auto 10px auto;
 }
 
-.receipt-title {
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.thanks-msg {
-  text-align: center;
-  margin-top: 15px;
-}
-
 /* ============================================================
-   PERFECT THERMAL PRINT — ZERO GAP (FINAL)
+   PERFECT 80MM THERMAL PRINTER PRINT
 ============================================================ */
 @media print {
 
@@ -154,7 +146,7 @@
     padding: 0 !important;
   }
 
-  /* hide everything except receipt */
+  /* Hide all content except receipt */
   body * {
     visibility: hidden !important;
   }
@@ -165,34 +157,13 @@
   }
 
   #print-receipt {
-    display: block !important;
-
-    /* exact thermal width */
-    width: 80mm !important;
-    max-width: 80mm !important;
-    min-width: 80mm !important;
-
-    /* remove right white space */
-    box-sizing: border-box;
-    margin: 0 !important;
-    padding: 10px !important;
-
-    /* avoid page break */
-    page-break-after: avoid;
-    page-break-before: avoid;
-    page-break-inside: avoid;
-
     position: absolute;
-    top: 0;
     left: 0;
-
-    font-family: monospace;
+    top: 0;
+    width: 80mm !important;
+    padding: 10px !important;
     font-size: 13px;
-  }
-
-  .receipt-logo {
-    width: 65px !important;
-    margin: 0 auto 10px auto;
+    box-sizing: border-box;
   }
 
   table {
@@ -207,6 +178,16 @@
 
   .thanks-msg {
     text-align: center;
-    margin-top: 15px;
+    margin-top: 12px;
   }
+}
+/* FINAL SMALL THERMAL LOGO FIX */
+.receipt-logo {
+  width: 50px !important;        /* perfect size */
+  max-width: 50px !important;    /* prevents enlargement */
+  height: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto 6px auto !important;
+  padding: 0 !important;
 }
