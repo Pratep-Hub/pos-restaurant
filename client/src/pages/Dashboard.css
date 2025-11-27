@@ -1,0 +1,226 @@
+/* --------------------------------------------------
+   MAIN PAGE & CARD
+-------------------------------------------------- */
+.dashboard-container {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 20px;
+}
+
+.dashboard-card {
+  max-width: 1200px;
+  margin: auto;
+  background: white;
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: rgba(100, 116, 139, 0.2) 0px 7px 18px;
+}
+
+/* --------------------------------------------------
+   TABLE SELECT DROPDOWN
+-------------------------------------------------- */
+.table-select-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.table-select-area span {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.table-select-area select {
+  border: 1px solid #cbd5e1;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: white;
+  outline: none;
+}
+
+/* --------------------------------------------------
+   POS ITEM TABLE
+-------------------------------------------------- */
+.pos-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pos-table th {
+  background: #e2e8f0;
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-bottom: 2px solid #cbd5e1;
+  text-align: left;
+}
+
+.pos-table td {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 10px;
+}
+
+.pos-table input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  background: #f1f5f9;
+}
+
+.pos-table input:focus {
+  border-color: #3b82f6;
+  background: white;
+}
+
+/* --------------------------------------------------
+   BUTTONS
+-------------------------------------------------- */
+.add-item-btn {
+  margin-top: 8px;
+  background: #1e293b;
+  color: white;
+  font-size: 0.85rem;
+  padding: 7px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-item-btn:hover {
+  background: #334155;
+}
+
+/* Footer buttons */
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 18px;
+  align-items: center;
+}
+
+.subtotal-text {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.save-btn {
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.25s;
+}
+
+.save-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.pay-btn {
+  background-color: #16a34a;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.25s;
+}
+
+.pay-btn:hover {
+  background-color: #15803d;
+}
+
+/* --------------------------------------------------
+   RESPONSIVE
+-------------------------------------------------- */
+@media (max-width: 768px) {
+  .dashboard-card {
+    padding: 16px;
+  }
+
+  .pos-table th,
+  .pos-table td {
+    padding: 8px;
+  }
+
+  .footer-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .subtotal-text {
+    text-align: center;
+  }
+}
+
+/* --------------------------------------------------
+   PRINT RECEIPT (IMPORTANT)
+-------------------------------------------------- */
+
+/* Hide print layout on screen */
+#print-receipt {
+  display: none;
+  font-family: monospace;
+  padding: 20px;
+}
+
+/* Only during print */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Show only the receipt */
+  #print-receipt,
+  #print-receipt * {
+    visibility: visible !important;
+  }
+
+  #print-receipt {
+    display: block !important;
+    width: 300px; /* 58mm/80mm thermal printer size */
+    margin: auto;
+    font-size: 14px;
+    color: #000;
+  }
+
+  .receipt-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+
+  .receipt-table th,
+  .receipt-table td {
+    padding: 4px 0;
+    border-bottom: 1px dashed #aaa;
+    text-align: left;
+  }
+
+  .receipt-total {
+    font-weight: bold;
+    margin-top: 5px;
+  }
+
+  .thanks-msg {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+  }
+}
