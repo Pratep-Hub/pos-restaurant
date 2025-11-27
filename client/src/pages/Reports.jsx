@@ -12,7 +12,7 @@ export default function Reports() {
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
 
-  // Daily Report Load
+  // Load Daily Report
   const loadDaily = async () => {
     const { data } = await api.get("/reports/daily", {
       params: { date: singleDate },
@@ -20,7 +20,7 @@ export default function Reports() {
     setReport(data);
   };
 
-  // Range Report Load
+  // Load Range Report
   const loadRange = async () => {
     if (!startDate || !endDate) {
       return alert("Select From and To dates");

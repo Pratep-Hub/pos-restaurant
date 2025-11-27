@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { api } from "../api";
-import "../pages/Dashboard.css";
+import "./Dashboard.css";
 
-const TABLES = ["T1", "T2", "T3", "T4","T5"];
+const TABLES = ["T1", "T2", "T3", "T4", "T5"];
 
 export default function Dashboard() {
   const [tableNo, setTableNo] = useState(TABLES[0]);
@@ -26,6 +26,7 @@ export default function Dashboard() {
     0
   );
 
+  // SAVE BILL
   const createBill = async () => {
     try {
       const filtered = items.filter((i) => i.name && i.quantity > 0);
@@ -40,48 +41,23 @@ export default function Dashboard() {
         items: filtered,
       });
 
-      console.log("Bill Saved:", data);
       setBill(data);
       alert("Bill Saved Successfully!");
     } catch (err) {
       console.error("Save Bill Error:", err.response?.data || err.message);
-      alert("Failed to save bill. Check console.");
+      alert("Failed to save bill.");
     }
   };
 
-  // ✅ FIXED PRINT FUNCTION — ALWAYS WORKS
+  // AUTO PRINT (NO POPUP WINDOW)
   const markPaidAndPrint = async () => {
     if (!bill?._id) return;
 
     await api.post(`/pos/bill/${bill._id}/pay`);
 
-    const printContents = document.getElementById("print-receipt").innerHTML;
-
-    const popup = window.open("", "_blank", "width=400,height=600");
-    popup.document.open();
-    popup.document.write(`
-      <html>
-        <head>
-          <title>Receipt</title>
-          <style>
-            body { font-family: monospace; padding: 20px; }
-            .receipt-title { text-align: center; font-size: 18px; font-weight: bold; }
-            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            th, td { padding: 4px 0; border-bottom: 1px dashed #aaa; text-align: left; }
-            .receipt-total { font-weight: bold; margin-top: 10px; }
-            .thanks-msg { text-align: center; margin-top: 20px; }
-          </style>
-        </head>
-        <body>
-          ${printContents}
-        </body>
-      </html>
-    `);
-
-    popup.document.close();
-    popup.focus();
-    popup.print();
-    popup.close();
+    setTimeout(() => {
+      window.print();
+    }, 300);
   };
 
   return (
@@ -89,20 +65,18 @@ export default function Dashboard() {
       <Navbar />
 
       <div className="dashboard-card">
-        {/* Table Selection */}
+
+        {/* TABLE SELECT */}
         <div className="table-select-area">
           <span>Table:</span>
-          <select
-            value={tableNo}
-            onChange={(e) => setTableNo(e.target.value)}
-          >
+          <select value={tableNo} onChange={(e) => setTableNo(e.target.value)}>
             {TABLES.map((t) => (
               <option key={t}>{t}</option>
             ))}
           </select>
         </div>
 
-        {/* POS Table */}
+        {/* POS ENTRY TABLE */}
         <table className="pos-table">
           <thead>
             <tr>
@@ -152,6 +126,7 @@ export default function Dashboard() {
           </tbody>
         </table>
 
+        {/* BUTTONS */}
         <button className="add-item-btn" onClick={addRow}>
           + Add Item
         </button>
@@ -171,7 +146,15 @@ export default function Dashboard() {
 
       {/* PRINT RECEIPT */}
       <div id="print-receipt" className="print-area">
+        
+        <img 
+          src="/TurkishLogo.png"
+          alt="Shop Logo"
+          className="receipt-logo"
+        />
+
         <h2 className="receipt-title">Turkish Doner</h2>
+
         <p>Table: {bill?.tableNo}</p>
         <p>Date: {new Date(bill?.date).toLocaleString()}</p>
         <hr />
