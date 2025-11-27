@@ -11,18 +11,22 @@ dotenv.config();
 
 const app = express();
 
-// CORS (allow all for now, later restrict)
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+// Correct CORS for Render Deployment
+app.use(cors({
+  origin: [
+    "http://localhost:5173", 
+    "https://pos-restaurant-frontend.onrender.com"
+  ],
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 app.use(express.json());
 
 // Connect MongoDB
 connectDB();
 
+// Test Route
 app.get("/", (req, res) => {
   res.send("POS API running");
 });
