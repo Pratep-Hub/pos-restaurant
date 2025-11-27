@@ -77,3 +77,54 @@
   padding: 10px;
   border-bottom: 1px solid #e2e8f0;
 }
+
+/* ============================================================
+   RESPONSIVE FIXES — PERFECT MOBILE VIEW
+============================================================ */
+@media (max-width: 600px) {
+
+  /* Card spacing smaller */
+  .reports-card {
+    padding: 16px;
+  }
+
+  /* Section input row: stack vertically */
+  .section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .section label {
+    font-size: 0.9rem;
+  }
+
+  .section input {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+
+  .section button {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+
+  /* Report table scrollable on small screens */
+  .report-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .report-table th,
+  .report-table td {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .report-output h3 {
+    font-size: 1.1rem;
+  }
+}
