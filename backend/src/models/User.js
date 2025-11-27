@@ -7,16 +7,15 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
 });
 
-// FIX: Remove next()
+// Hash password before saving
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
-
   this.password = await bcrypt.hash(this.password, 10);
 });
 
 // Compare password
-userSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+userSchema.methods.matchPassword = function (enteredPassword) {
+  return bcrypt.compare(enteredPassword, this.password);
 };
 
 export default mongoose.model("User", userSchema);
