@@ -11,16 +11,22 @@ dotenv.config();
 
 const app = express();
 
-// Correct CORS for Render Deployment
-app.use(cors({
-  origin: [
-    "http://localhost:5173", 
-    "https://pos-restaurant-frontend.onrender.com"
-  ],
-  methods: "GET,POST,PUT,DELETE",
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
+/* ----------------------
+   FIX CORS 100% (Render)
+---------------------- */
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://pos-restaurant-frontend.onrender.com");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  
+  next();
+});
 
+// ALSO add express.json
 app.use(express.json());
 
 // Connect MongoDB
@@ -31,11 +37,10 @@ app.get("/", (req, res) => {
   res.send("POS API running");
 });
 
-// API Routes
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/pos", posRoutes);
 app.use("/api/reports", reportRoutes);
 
-// SERVER
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
